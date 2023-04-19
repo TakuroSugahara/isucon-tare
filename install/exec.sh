@@ -1,5 +1,5 @@
 #!/bin/bash
 
-for script in install-*.sh; do
-    bash "$script"
-done
+sh ./install-git.sh
+sh ./install-alp.sh
+sh ./install-pt-query-digest.sh

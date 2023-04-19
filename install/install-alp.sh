@@ -12,7 +12,9 @@ else
   sudo chmod 777 /usr/local/bin
   sudo install ./alp /usr/local/bin
 
-  rm alp_linux_amd64.zip
+  rm ./percona-toolkit_3.0.10-1.xenial_amd64.deb
+  rm ./alp_linux_amd64.zip
+  rm ./alp
 
   echo "alp has been installed successfully."
 fi
