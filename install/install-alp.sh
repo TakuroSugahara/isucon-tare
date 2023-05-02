@@ -19,5 +19,3 @@ else
   echo "alp has been installed successfully."
 fi
 
-# alpのバージョンを確認する
-alp --version

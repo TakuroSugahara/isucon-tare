@@ -1,8 +1,4 @@
 # nginx のログを削除
-echo ":: CLEAR LOGS       ====>"
-sudo truncate -s 0 -c /var/log/nginx/access.log
-sudo truncate -s 0 -c /var/log/mysql/mysqld-slow.log
-
 # TODO: 起動しているservicedの変更
 SERVICE=isu-go.service
 
@@ -10,6 +6,10 @@ NGINX_LOG=/var/log/nginx/access.log
 NGINX_TMP_LOG=/tmp/access.txt
 MYSQL_LOG=/var/log/mysql/mysqld-slow.log
 MYSQL_TMP_LOG=/tmp/digest.txt
+
+echo ":: CLEAR LOGS       ====>"
+sudo truncate -s 0 -c NGINX_LOG
+sudo truncate -s 0 -c MYSQL_LOG
 
 # 各種サービスの再起動
 echo
