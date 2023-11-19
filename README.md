@@ -1,22 +1,31 @@
 # isucon秘伝のタレ
 
-## sshまで
-
-1. pemファイルもらう
-1. `chmod 600 ./private-isu.pem` で権限を変更
-1. `ssh -i ./private-isu.pem <isucon-server-ip>` でssh接続
-
 ## 当日マニュアル
 
 1. sshする
 1. ベンチマーカー動かす
 1. ユーザーの作成
 1. gitの設定
+1. 権限の変更 
+  1. `sudo chmod 777 -R /etc/nginx`
+  1. `sudo chmod 777 -R /etc/mysql`
+  1. `sudo chmod 777 -R /var/`
+  1. `sudo chmod 777 -R /tmp/`
 1. 言語切り替える
 1. データベースの確認
 1. nginx.conf変更
 1. alp, pt-query-digestのインストール
-1. bench-marker.sh scriptを実行
+1. bench-marker.sh scriptを実行(build scriptのしゅうせい)
+
+## sshまで
+
+1. pemファイルもらう
+1. `chmod 600 ./private-isu.pem` で権限を変更
+1. `ssh -i ./private-isu.pem <isucon-server-ip>` でssh接続
+
+## ベンチマーカー動かす
+
+たぶん、リーダーボードからボタンポチ
 
 ## ユーザーの作成
 
@@ -46,11 +55,11 @@ ssh-keygen
 # 接続確認
 ssh -T git@github.com
 
-cd ~/private-isu
+cd ~/private_isu
 git init
 
-# git ignoreしたいものがあれば作成
-touch .gitignore
+# リポジトリを作成
+# https://github.com/new
 
 # 作成している新しいrepoにpush
 git add .
@@ -100,12 +109,30 @@ ALTER TABLE comments ADD INDEX post_id_idx (post_id, created_at DESC);
 
 ```
 
+## nginx.conf変更
+
+```sh
+  log_format json escape=json '{"time":"$time_iso8601",'
+                            '"host":"$remote_addr",'
+                            '"port":$remote_port,'
+                            '"method":"$request_method",'
+                            '"uri":"$request_uri",'
+                            '"status":"$status",'
+                            '"body_bytes":$body_bytes_sent,'
+                            '"referer":"$http_referer",'
+                            '"ua":"$http_user_agent",'
+                            '"request_time":"$request_time",'
+                            '"response_time":"$upstream_response_time"}';
+
+  access_log /var/log/nginx/access.log json;
+```
+
 ## alp, pt-query-digestのインストール
 
 ```sh
 
-cd private-isu
-mkdir install
+cd "$HOME/private_isu"
+mkdir install && cd install
 
 touch alp.sh
 touch pt-query-digest.sh

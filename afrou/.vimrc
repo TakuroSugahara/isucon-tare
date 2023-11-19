@@ -4,6 +4,7 @@ scriptencoding utf-8
 set showcmd
 set wildmenu
 set expandtab
+set hlsearch
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
