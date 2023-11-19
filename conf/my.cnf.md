@@ -3,7 +3,7 @@
 ```my.cnf
 [mysqld]
 slow_query_log=1
-slow_query_log_file=/var/log/mysql-slow.sql
+slow_query_log_file=/var/log/mysql/mysql-slow.sql
 long_query_time=1
 
 query_cache_type = 1
@@ -31,7 +31,7 @@ max_connections=10000  # <- connection の limit を更新
 ```
 [mysqld]
 slow_query_log=1
-slow_query_log_file=/var/log/mysql-slow.sql
+slow_query_log_file=/var/log/mysql/mysql-slow.sql
 long_query_time=0
 ```
 
