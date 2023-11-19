@@ -1,62 +1,124 @@
 # isucon秘伝のタレ
 
-## 手順
+## sshまで
 
-1. `./install/exec.sh` installコマンドで必要なツールをインストール
-1. gitでapplication, `/etc/nginx/nginx.conf`, `/etc/mysql/my.cnf` のバックアップをとる
-1. nginx.conf, my.confの設定を変更
-1. `restart-and-bench.sh` のTODO箇所を変更して実行
-1. ベンチマークのスコアが問題なく動けば環境構築完了
+1. pemファイルもらう
+1. `chmod 600 ./private-isu.pem` で権限を変更
+1. `ssh -i ./private-isu.pem <isucon-server-ip>` でssh接続
 
-## +α
+## 当日マニュアル
 
-1. vim環境の構築
-1. dbのconnectionの設定
-1. db clientが表示できるか確認
+1. sshする
+1. ベンチマーカー動かす
+1. ユーザーの作成
+1. gitの設定
+1. 言語切り替える
+1. データベースの確認
+1. nginx.conf変更
+1. alp, pt-query-digestのインストール
+1. bench-marker.sh scriptを実行
 
-TODO
+## ユーザーの作成
 
-- etc nginx, mysql周りの初期設定ファイルを準備する
-- etc nginx, mysql周りのシンボリックリンクを設定する
-- vimの設定が簡単にできるようにする
-  - plugin周りも入れれたら嬉しい
-  - clipboard, copyが大変だった
-- dadbod uiを入れる
-  - indexを見れるようにする
-  - indexを作成できるようにする
+```sh
+# afrouユーザーを作成
+sudo adduser afrou
+# sudo権限を付与
+sudo gpasswd -a afrou sudo
+sudo su - afrou
 
-## 勉強
+touch ~/.vimrc
+vim ~/.vimrc
+vim ~/.bashrc
+source ~/.bashrc
+```
 
-- nginx.confの設定とチューニングについて学ぶ
-  - sendfileの設定
-  - UNIXドメインソケットについて
-    - ネットワーク通信用のソケットよりも早く通信できるらしいが、、？
-  - ggipによる圧縮によってどのぐらい変わるのか
-  - 画像周りのファイルに対する expiresのチューニング
-    - ネットワークの帯域が詰まることがあるらしいがどういうことだろうか？
-  - keepaliveによるパフォーマンス変化
-- mysqlのチューニングについて学ぶ
-  - max_connectionについて
-  - open file limitについて
-  - query_cache_limit, query_cache_sizeの設定
-    - どのぐらいまで設定するのが適切か？
-    - isuconの場合は特にギリギリまで攻めたい
-  - バッファプールサイズについて
-  - innodbについて
-- 画像ファイルのチューニングについて学ぶ
-  - publicディレクトリにおいた場合
-  - DBに画像ファイルをおいた場合
-  - 画像をどのようにしてクライアントに返しているか
-  - 画像がpublicにあればそれを返して、なければapplicationを見るってどうやるの？
+## gitの設定
 
-## Test
+```sh
+sudo su - isucon
+ssh-keygen 
+# enter, enter
 
-### Install test
+# 公開鍵をgithubに登録
+# https://github.com/settings/keys
+
+# 接続確認
+ssh -T git@github.com
+
+cd ~/private-isu
+git init
+
+# git ignoreしたいものがあれば作成
+touch .gitignore
+
+# 作成している新しいrepoにpush
+git add .
+git commit -m "init"
+...
+```
+
+## 言語切り替える
+
+```sh
+$ sudo systemctl stop isu-ruby
+$ sudo systemctl disable isu-ruby
+$ sudo systemctl start isu-go
+$ sudo systemctl enable isu-go
+```
+
+## データベースの確認
 
 
 ```sh
-$ docker build -t tare .
-$ docker run -v ${PWD}/install:/app/install --rm -it tare /bin/sh
+sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
 
-./install/exec.sh
+slow_query_log=1
+slow_query_log_file=/var/log/mysql/mysql-slow.sql
+long_query_time=0.1
+
+query_cache_type = 1
+query_cache_limit = 2M
+query_cache_size = 32M
 ```
+
+```sh
+# slow query確認
+SHOW variables like 'slow_query%'; で確認
+```
+
+```sh
+SHOW databases;
+USE {table_name};
+SHOW tables;
+
+# index確認
+SHOW INDEX FROM {table_name};
+
+# index作成
+ALTER TABLE comments ADD INDEX post_id_idx (post_id, created_at DESC);
+
+```
+
+## alp, pt-query-digestのインストール
+
+```sh
+
+cd private-isu
+mkdir install
+
+touch alp.sh
+touch pt-query-digest.sh
+
+sudo chmod 777 alp.sh
+sudo chmod 777 pt-query-digest.sh
+
+# tareからコピーしてきて実行
+# https://github.com/TakuroSugahara/isucon-tare/blob/73ccd78e7498d604228c07f63182f342216292b5/install/install-alp.sh#L11
+# https://github.com/TakuroSugahara/isucon-tare/blob/73ccd78e7498d604228c07f63182f342216292b5/install/install-pt-query-digest.sh#L1
+
+./alp.sh
+./pt-query-digest.sh
+
+```
+
