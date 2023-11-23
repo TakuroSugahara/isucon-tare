@@ -93,7 +93,9 @@ $ sudo systemctl enable isu-go
 
 
 ```sh
-sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+# NOTE: mysqldの設定ファイルがものによって違うので確認
+ln -s /etc/mysql/mysql.conf.d/mysqld.cnf
+sudo vim mysqld.cnf
 
 slow_query_log=1
 slow_query_log_file=/var/log/mysql/mysql-slow.log
@@ -119,6 +121,11 @@ ALTER TABLE comments ADD INDEX post_id_idx (post_id, created_at DESC);
 ```
 
 ## nginx.conf変更
+
+シンボリックリンクを貼る
+```
+ln -s /etc/nginx/nginx.conf
+```
 
 ```sh
   log_format json escape=json '{"time":"$time_iso8601",'
