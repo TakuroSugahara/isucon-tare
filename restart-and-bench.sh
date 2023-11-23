@@ -34,7 +34,7 @@ read _
 echo
 echo ":: ACCESS LOG       ====>"
 # TODO: リクエストpathに合わせて変更する, /posts/[:id]などをまとめたりする
-sudo cat $NGINX_LOG | alp json --sort sum -r -m "/posts/[0-9]+,/@\w+","/image/[0-9]+,/@\w" -o "count,1xx,2xx,3xx,4xx,5xx,method,uri,min,max,sum,avg,min_body,max_body,avg_body" > $NGINX_TMP_LOG
+sudo cat $NGINX_LOG | alp json --sort sum -r  -o "count,1xx,2xx,3xx,4xx,5xx,method,uri,min,max,sum,avg,min_body,max_body,avg_body" -m "/posts/[0-9]+,/@\w+","/image/[0-9]+,/@\w" > $NGINX_TMP_LOG
 
 cat $NGINX_TMP_LOG
 

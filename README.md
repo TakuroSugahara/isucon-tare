@@ -24,10 +24,6 @@
 1. ユーザーの作成
 1. gitの設定
 1. 権限の変更 
-  1. `sudo chmod 777 -R /etc/nginx`
-  1. `sudo chmod 777 -R /etc/mysql`
-  1. `sudo chmod 777 -R /var/`
-  1. `sudo chmod 777 -R /tmp/`
 1. 言語切り替える
 1. データベースの確認
 1. nginx.conf変更
@@ -100,12 +96,8 @@ $ sudo systemctl enable isu-go
 sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
 
 slow_query_log=1
-slow_query_log_file=/var/log/mysql/mysql-slow.sql
-long_query_time=0.1
-
-query_cache_type = 1
-query_cache_limit = 2M
-query_cache_size = 32M
+slow_query_log_file=/var/log/mysql/mysql-slow.log
+long_query_time=0
 ```
 
 ```sh
@@ -158,8 +150,9 @@ sudo chmod 777 alp.sh
 sudo chmod 777 pt-query-digest.sh
 
 # tareからコピーしてきて実行
-# https://github.com/TakuroSugahara/isucon-tare/blob/73ccd78e7498d604228c07f63182f342216292b5/install/install-alp.sh#L11
+# NOTE: pt-query-digest.shから実行すること
 # https://github.com/TakuroSugahara/isucon-tare/blob/73ccd78e7498d604228c07f63182f342216292b5/install/install-pt-query-digest.sh#L1
+# https://github.com/TakuroSugahara/isucon-tare/blob/f8583f1b347bfd89d72917c42dd373f7ba0698ce/install/install-alp.sh#L8
 
 ./alp.sh
 ./pt-query-digest.sh
